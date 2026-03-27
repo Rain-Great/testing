@@ -1,0 +1,13 @@
+{
+  "name": "clinic-demo",
+  "version": "1.0.0",
+  "description": "AI Vibe Coding + Auto Deployment Demo",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "sql.js": "^1.11.0"
+  }
+}

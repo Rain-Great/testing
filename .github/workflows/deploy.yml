@@ -1,0 +1,26 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            REPO_NAME="${{ github.event.repository.name }}"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+            if [ ! -d ~/$REPO_NAME ]; then
+              git clone $REPO_URL ~/$REPO_NAME
+            fi
+            cd ~/$REPO_NAME
+            git pull origin main
+            npm install --omit=dev
+            mkdir -p data
+            pm2 restart $REPO_NAME || pm2 start app.js --name $REPO_NAME
+            pm2 save

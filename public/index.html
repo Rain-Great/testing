@@ -3,35 +3,443 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My App</title>
+  <title>病患看診系統</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: 'Microsoft JhengHei', sans-serif;
-      background: #f5f5f5;
+      font-family: 'Microsoft JhengHei', 'Taipei Sans TC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 20px;
+      min-height: 100vh;
     }
+    
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
-      text-align: center;
-      padding-top: 100px;
     }
-    h1 {
-      font-size: 2.5rem;
-      color: #2c3e50;
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      padding-top: 20px;
+    }
+    
+    .header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .header p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+    }
+    
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .form-section {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .form-section h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 25px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 15px;
+    }
+    
+    .form-group {
       margin-bottom: 20px;
     }
-    p {
+    
+    .form-group label {
+      display: block;
       font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .form-group input[type="time"] {
+      padding: 12px;
+      font-size: 1rem;
+    }
+    
+    .btn-submit {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+    
+    .list-section {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .list-section h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 25px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 15px;
+    }
+    
+    .patient-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .patient-card {
+      background: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-left: 5px solid #667eea;
+      padding: 20px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+    
+    .patient-card:hover {
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+      transform: translateX(5px);
+    }
+    
+    .patient-card.visited {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+      opacity: 0.7;
+    }
+    
+    .patient-info {
+      margin-bottom: 15px;
+    }
+    
+    .patient-info-row {
+      display: flex;
+      gap: 20px;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    .patient-info-item {
+      flex: 1;
+    }
+    
+    .patient-info-label {
+      font-weight: bold;
+      color: #667eea;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.95rem;
+    }
+    
+    .patient-info-value {
+      color: #333;
+      font-size: 1.1rem;
+    }
+    
+    .patient-card .btn-visit {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    
+    .patient-card .btn-visit:hover:not(:disabled) {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+    
+    .patient-card .btn-visit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    .empty-message {
+      text-align: center;
+      padding: 50px 20px;
       color: #999;
+      font-size: 1.2rem;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    
+    .status-badge.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-badge.visited {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+      font-size: 1.1rem;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .success-message.show {
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .patient-info-row {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>My App</h1>
-    <p>Ready to build something awesome.</p>
+    <div class="header">
+      <h1>🏥 病患看診系統</h1>
+      <p id="today-date">今日日期</p>
+    </div>
+    
+    <div class="content">
+      <div class="form-section">
+        <h2>新增病患</h2>
+        <div class="success-message" id="successMessage"></div>
+        <form id="patientForm">
+          <div class="form-group">
+            <label for="name">病患姓名 *</label>
+            <input type="text" id="name" name="name" placeholder="請輸入病患姓名" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="complaint">主訴 *</label>
+            <input type="text" id="complaint" name="complaint" placeholder="例：頭痛、感冒、腹瀉" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="time">看診時間 *</label>
+            <input type="time" id="time" name="time" required>
+          </div>
+          
+          <button type="submit" class="btn-submit">新增病患</button>
+        </form>
+      </div>
+      
+      <div class="list-section">
+        <h2>今日看診清單</h2>
+        <div class="patient-list" id="patientList">
+          <div class="empty-message">尚無病患資料</div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // 設定今日日期
+    function setTodayDate() {
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+      const dateString = today.toLocaleDateString('zh-TW', options);
+      document.getElementById('today-date').textContent = '今日：' + dateString;
+    }
+    
+    // 載入病患清單
+    async function loadPatients() {
+      try {
+        const response = await fetch('/api/patients');
+        const patients = await response.json();
+        
+        const parentList = document.getElementById('patientList');
+        
+        if (patients.length === 0) {
+          parentList.innerHTML = '<div class="empty-message">尚無病患資料</div>';
+          return;
+        }
+        
+        parentList.innerHTML = patients.map(patient => `
+          <div class="patient-card ${patient.visited ? 'visited' : ''}">
+            <div class="patient-info">
+              <div class="patient-info-row">
+                <div class="patient-info-item">
+                  <span class="patient-info-label">姓名</span>
+                  <span class="patient-info-value">${patient.name}</span>
+                </div>
+                <div class="patient-info-item">
+                  <span class="patient-info-label">看診時間</span>
+                  <span class="patient-info-value">${patient.appointment_time}</span>
+                </div>
+              </div>
+              <div class="patient-info-row">
+                <div class="patient-info-item">
+                  <span class="patient-info-label">主訴</span>
+                  <span class="patient-info-value">${patient.chief_complaint}</span>
+                </div>
+                <div class="patient-info-item">
+                  <span class="patient-info-status">
+                    <span class="status-badge ${patient.visited ? 'visited' : 'pending'}">
+                      ${patient.visited ? '✓ 已看診' : '⏳ 待看診'}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-visit" ${patient.visited ? 'disabled' : ''} onclick="markAsVisited(${patient.id})">
+              ${patient.visited ? '已完成看診' : '標記為已看診'}
+            </button>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('載入失敗:', error);
+        document.getElementById('patientList').innerHTML = '<div class="empty-message">載入失敗，請重新整理</div>';
+      }
+    }
+    
+    // 新增病患
+    document.getElementById('patientForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const chief_complaint = document.getElementById('complaint').value;
+      const appointment_time = document.getElementById('time').value;
+      
+      try {
+        const response = await fetch('/api/patients', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            chief_complaint,
+            appointment_time
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // 顯示成功訊息
+          const successMsg = document.getElementById('successMessage');
+          successMsg.textContent = '✓ 病患已新增成功！';
+          successMsg.classList.add('show');
+          setTimeout(() => {
+            successMsg.classList.remove('show');
+          }, 3000);
+          
+          // 清空表單
+          document.getElementById('patientForm').reset();
+          
+          // 重新載入清單
+          loadPatients();
+        } else {
+          alert('錯誤：' + result.error);
+        }
+      } catch (error) {
+        console.error('提交失敗:', error);
+        alert('提交失敗，請重試');
+      }
+    });
+    
+    // 標記已看診
+    async function markAsVisited(id) {
+      try {
+        const response = await fetch(`/api/patients/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          loadPatients();
+        } else {
+          alert('錯誤：' + result.error);
+        }
+      } catch (error) {
+        console.error('更新失敗:', error);
+        alert('更新失敗，請重試');
+      }
+    }
+    
+    // 初始化
+    setTodayDate();
+    loadPatients();
+    
+    // 每30秒自動重新載入一次
+    setInterval(loadPatients, 30000);
+  </script>
 </body>
 </html>
